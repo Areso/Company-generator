@@ -57,6 +57,24 @@ def populate_deps():
     modf = ['Московский', 'Питерский', 'Среднерусский', 'Южнорусский', 'Кавказский',
             'Волжский', 'Уральский', 'Сибирский', 'Дальневосточный',
             'Северозападный', 'Калининградский', 'Архангельский']
+    for level in titles:
+        for title in level:
+            if "$modf" in title:
+                index_to_delete = level.index(title)
+                level.pop(index_to_delete)
+                new_titles = []
+                for branch in modf:
+                    new_titles.append(title.replace("$modf", branch))
+                level.extend(new_titles)
+    for level in titles:
+        for title in level:
+            if "$modo" in title:
+                index_to_delete = level.index(title)
+                level.pop(index_to_delete)
+                new_titles = []
+                for office in modo:
+                    new_titles.append(title.replace("$modo", office))
+                level.extend(new_titles)
     global mydb
     mydb.ping(reconnect=True, attempts=1, delay=0)
     mycursor = mydb.cursor()
@@ -86,7 +104,7 @@ def spawn_childs(cur_depth, depth):
                 nxt_lvl.append(dep_id)
                 mycursor = mydb.cursor()
                 mycursor.execute("""INSERT INTO deps(dep_id, parent_dep_id, dep_name) 
-				VALUES (%(dep_id)s,%(parent_dep_id)s,%(dep_name)s)""",
+                VALUES (%(dep_id)s,%(parent_dep_id)s,%(dep_name)s)""",
                                  {'dep_id': dep_id,
                                   'parent_dep_id': 0,
                                   'dep_name': depname})
@@ -109,7 +127,7 @@ def spawn_childs(cur_depth, depth):
                     nxt_lvl.append(dep_id)
                     mycursor = mydb.cursor()
                     mycursor.execute("""INSERT INTO deps(dep_id, parent_dep_id, dep_name) 
-					VALUES (%(dep_id)s,%(parent_dep_id)s,%(dep_name)s)""",
+                    VALUES (%(dep_id)s,%(parent_dep_id)s,%(dep_name)s)""",
                                      {'dep_id': dep_id,
                                       'parent_dep_id': every_cur_parent,
                                       'dep_name': depname})

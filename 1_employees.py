@@ -118,8 +118,22 @@ def insert_employees():
                                   'dep_id': dep_id})
                 mydb.commit()
             else:
-                #insert ~30 people
-                pass
+                # insert 5..30 people
+                number_of_employees_in_dep = random.randrange(5, 30)
+                iterator = 0
+                while iterator<number_of_employees_in_dep:
+                    iterator += 1
+                    person = gen_person()
+                    mycursor.execute("""INSERT INTO employees(dep_id, fullname,
+                                    salary, gender, birthdate ) VALUES (%(dep_id)s, %(fullname)s,
+                                    %(salary)s, %(gender)s, %(birthdate)s)""",
+                                     {'dep_id': dep_id,
+                                      'fullname': person[0],
+                                      'salary': person[3],
+                                      'gender': person[1],
+                                      'birthdate': person[2]
+                                      })
+                mydb.commit()
     else:
         print("no deps found. exiting")
 
