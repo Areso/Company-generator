@@ -97,7 +97,7 @@ def insert_employees():
                               {'parent_dep_id': dep_id})
             checkchild_res = mycursor.fetchall()
             if len(checkchild_res)>0:
-                #insert only head of the dep
+                # insert only head of the dep
                 # person = [fullname (str), gender (int, birthdate (str), salary (int)]
                 person = gen_person()
                 mycursor.execute("""INSERT INTO employees(dep_id, fullname,
@@ -109,6 +109,13 @@ def insert_employees():
                        'gender': person[1],
                        'birthdate': person[2]
                        })
+                mydb.commit()
+                head_of_dep_id = mycursor.lastrowid
+                mycursor.execute("""UPDATE deps
+                SET head_of_dep = %(head_id)s
+                WHERE dep_id = %(dep_id)s""",
+                                 {'head_id': head_of_dep_id,
+                                  'dep_id': dep_id})
                 mydb.commit()
             else:
                 #insert ~30 people
@@ -122,4 +129,10 @@ if __name__ == '__main__':
     firstnames = loading_firstnames()
     patronames = loading_patronicnames()
     create_db_con()
+    # clear the employees
+    global mydb
+    mycursor = mydb.cursor()
+    mycursor.execute("delete from employees;")
+    mydb.commit()
+    # ended
     insert_employees()
